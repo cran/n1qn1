@@ -1,0 +1,14 @@
+c995e14ddffbf5155d8c0693e67d6617 *DESCRIPTION
+74396f1f0afebebb3198ca0258fbf616 *NAMESPACE
+c72a803c1963182ecdf119430891c99c *R/n1qn1.R
+02e8d0665cd6e17ada4832d24658ae2f *README.md
+567351b9adbecfcb38180eb4204e10b4 *inst/COPYING
+1b686cfda8492f496ee129f499053369 *man/n1qn1.Rd
+f282136017173c315cec5012fe59b53c *src/Makevars
+ae3a68412dcdd8bb329a6deaa4f041be *src/RcppExpMod.cpp
+9d6a1b2cdbd3f34fe6ddeeabf6b0807a *src/evaluate.h
+407d6f34edae095914613741b5f64a1f *src/init.c
+79c6a308bb9706b8abb76d19bd4d70f9 *src/n1qn1_all.f
+994492a100d0fcd174c8144806613393 *src/vfinite.c
+94e0c172c727f27889d371dbc7fba24c *tests/testthat.R
+0d0389b4fc5a599acbd97638ea4eec07 *tests/testthat/test-banana.R

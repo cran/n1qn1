@@ -4,21 +4,12 @@
 \alias{qnbd}
 \title{qnbd optimization}
 \usage{
-qnbd(
-  par,
-  fn,
-  gr,
-  lower = -Inf,
-  upper = Inf,
+qnbd(par, fn, gr, lower = -Inf, upper = Inf,
   environment = parent.frame(1),
-  zero = sqrt(.Machine$double.eps/7e-07),
-  maxFn = 10000L,
-  maxIt = 10000L,
-  epsf = sqrt(.Machine$double.eps),
-  epsg = sqrt(.Machine$double.eps),
-  epsx = sqrt(.Machine$double.eps),
-  print.functions = FALSE
-)
+  zero = sqrt(.Machine$double.eps/7e-07), maxFn = 10000L,
+  maxIt = 10000L, epsf = sqrt(.Machine$double.eps),
+  epsg = sqrt(.Machine$double.eps), epsx = sqrt(.Machine$double.eps),
+  print.functions = FALSE)
 }
 \arguments{
 \item{par}{Initial parameter estimate}

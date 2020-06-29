@@ -11,7 +11,7 @@ c For more information, see the COPYING file which you should have received
 c along with this program.
 c
       subroutine rlbd(indrl,n,simul,x,binf,bsup,f,hp,t,tmax,d,gn,
-     &     tproj,amd,amf,iprint,zero,nap,napmax,xn,izs,rzs,dzs)
+     &     tproj,amd,amf,zero,nap,napmax,xn,izs,rzs,dzs)
 c
 c!but
 c     subroutine de recherche lineaire pour des problemes avec
@@ -124,7 +124,6 @@ c
       character var2*3
       dimension x(n),xn(n),gn(n),d(n),binf(n),bsup(n),izs(*)
       double precision dzs(*)
-      character bufstr*(4096)
       real rzs(*)
 c
       indrl=1
@@ -151,36 +150,26 @@ c
 c
 c     calcul de tproj:plus petit point de discontinuite de h'(t)
       tproj=0.0d+0
-      do 7 i=1,n
-      CRES=d(i)
-      if (CRES .lt. 0) then
-         goto 4
-      elseif (CRES .eq. 0) then 
-         goto 7
-      else
-         goto 5
-      endif
-4     t2=(binf(i)-x(i))/d(i)
-      go to 6
-5     t2=(bsup(i)-x(i))/d(i)
-6     if (t2.le.0.0d+0) go to 7
-      if (tproj.eq.0.0d+0) tproj=t2
-      if (t2.gt.tproj) go to 7
-      tproj=t2
-      icop=i
+      do i=1,n
+         CRES=d(i)
+         if (CRES .lt. 0) then
+            goto 4
+         elseif (CRES .eq. 0) then 
+            goto 7
+         else
+            goto 5
+         endif
+ 4       t2=(binf(i)-x(i))/d(i)
+         go to 6
+ 5       t2=(bsup(i)-x(i))/d(i)
+ 6       if (t2.le.0.0d+0) go to 7
+         if (tproj.eq.0.0d+0) tproj=t2
+         if (t2.gt.tproj) go to 7
+         tproj=t2
+         icop=i
+      end do
 7     continue
 c
-c$$$      if (iprint.ge.3) then
-c$$$        write (bufstr,14050) tproj,tmax,hp
-c$$$        call basout(io_out ,io ,bufstr(1:lnblnk(bufstr)))
-c$$$        endif
-c$$$14050 format (' rlbd tp=',e11.4,
-c$$$     &        ' tmax=',e11.4,' dh0/dt=',e11.4 )
-c$$$15000 format (a3,' t=',e11.4,' h=',e11.4,' dh/dt=',e11.4,
-c$$$     & ' dfh/dt=', e11.4,' dt',e8.1)
-c$$$15020 format (3x,' t=',e11.4,' h=',e11.4,' dh/dt=',e11.4,
-c$$$     & ' dfh/dt=', e11.4,' dt',e8.1)
-c$$$16000 format (' rlbd : sortie du domaine : indic=',i2,'  t=',e11.4)
 c
 c              boucle
 c
@@ -189,8 +178,9 @@ c     calcul de xn,de fn et de gn
         k=3
         goto 1000
       end if
-      do 230 i=1,n
-230   xn(i)=x(i)+t*d(i)
+      do i=1,n
+         xn(i)=x(i)+t*d(i)
+      end do
       call proj (n,binf,bsup,xn)
       if (icos.gt.0) xn(icos)=bsup(icos)
       if (icoi.gt.0) xn(icoi)=binf(icoi)
@@ -218,14 +208,16 @@ c$$$           endif
 c
 c      calcul de hpg et hpd
       hpg=0.0d+0
-      do 242 i=1,n
-242   xn(i)=x(i)+t*d(i)
+      do i=1,n
+         xn(i)=x(i)+t*d(i)
+      end do
       if (icoi.gt.0) xn(icoi)=bsup(icoi)
       if (icos.gt.0) xn(icos)=bsup(icos)
       call proj(n,binf,bsup,xn)
-      do 244 i=1,n
-      xni=xn(i)
-244   if(binf(i).lt.xni.and.xni.lt.bsup(i)) hpg=hpg + d(i)*gn(i)
+      do i=1,n
+         xni=xn(i)
+         if(binf(i).lt.xni.and.xni.lt.bsup(i)) hpg=hpg + d(i)*gn(i)
+      end do
       hpd=hpg
       if(icoi.gt.0) hpg=hpg + d(icoi)*gn(icoi)
       if(icos.gt.0) hpg=hpg + d(icos)*gn(icos)
@@ -238,23 +230,24 @@ c      la derivee de h est nulle
 c      calcul du pas saturant toutes les bornes:tmaxp
       tmaxp=0.0d+0
       ico1=0
-      do 350 i=1,n
-      CRES=d(i)
-      if (CRES .lt. 0) then 
-         goto 310
-      elseif (CRES .eq. 0) then
-         goto 350
-      else
-         goto 320
-      endif
-310   t2=(binf(i)-x(i))/d(i)
-      go to 330
-320   t2=(bsup(i)-x(i))/d(i)
-330   if (t2.le.0.0d+0) go to 350
-      if (tmaxp.eq.0.0d+0) tmaxp=t2
-      if (tmaxp.gt.t2)go to 350
-      tmaxp=t2
-      ico1=i
+      do i=1,n
+         CRES=d(i)
+         if (CRES .lt. 0) then 
+            goto 310
+         elseif (CRES .eq. 0) then
+            goto 350
+         else
+            goto 320
+         endif
+ 310     t2=(binf(i)-x(i))/d(i)
+         go to 330
+ 320     t2=(bsup(i)-x(i))/d(i)
+ 330     if (t2.le.0.0d+0) go to 350
+         if (tmaxp.eq.0.0d+0) tmaxp=t2
+         if (tmaxp.gt.t2)go to 350
+         tmaxp=t2
+         ico1=i
+      end do
 350   continue
       if (t.lt.tmaxp) then
          if(fn.le.f+amf*hp*t) goto 1010
@@ -506,8 +499,9 @@ c      calcul de indrl
 c
 c      fin du programme
 1010  f=fn
-      do 810 i=1,n
-810   x(i)=x(i)+t*d(i)
+      do i=1,n
+         x(i)=x(i)+t*d(i)
+      end do
       call proj(n,binf,bsup,x)
       if (icos.gt.0) x(icos)=bsup(icos)
       if (icoi.gt.0) x(icoi)=binf(icoi)

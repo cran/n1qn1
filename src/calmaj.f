@@ -19,21 +19,24 @@ c     subroutine de qnbd
       nfac1=nfac+1
       nnfac=n-nfac
       n2fac=(nfac*nfac1)/2
-      do 10 i=1,n
-10    w(i)=g1(i)*sig
+      do i=1,n
+         w(i)=g1(i)*sig
+      end do
       k=n2fac
       if(nfac.eq.0)go to 25
-      do 20 j=1,nfac
-      do 20 i=nfac1,n
-      k=k+1
-      dh(k)=dh(k)+g1(i)*w(j)
-20    continue
+      do j=1,nfac
+         do i=nfac1,n
+            k=k+1
+            dh(k)=dh(k)+g1(i)*w(j)
+         end do
+      end do
 25    k=n2fac+nfac*nnfac
-      do 30 j=nfac1,n
-      do 30 i=j,n
-      k=k+1
-      dh(k)=dh(k) + g1(i)*w(j)
-30    continue
+      do j=nfac1,n
+         do i=j,n
+            k=k+1
+            dh(k)=dh(k) + g1(i)*w(j)
+         end do
+      end do
 50    ir=nfac
       if(nfac.eq.0)return
       call majour(dh,g1,w,nfac,sig,ir,mk,epsmc)

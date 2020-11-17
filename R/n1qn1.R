@@ -34,8 +34,6 @@
 ##'      }
 ##' @author C. Lemarechal, Stephen L. Campbell, Jean-Philippe
 ##'     Chancelier, Ramine Nikoukhah, Wenping Wang & Matthew L. Fidler
-##' @importFrom Rcpp evalCpp
-##' @useDynLib n1qn1, .registration=TRUE
 ##' @examples
 ##'
 ##' ## Rosenbrock's banana function
@@ -95,43 +93,47 @@
 ##' ## Optimization time.
 ##'
 ##' @export
-n1qn1 <- function(call_eval, call_grad, vars, environment=parent.frame(1), ...,
-                  epsilon=.Machine$double.eps, max_iterations=100, nsim=100,
-                  imp=0,
-                  invisible=NULL,
-                  zm=NULL, restart=FALSE,
-                  assign=FALSE,
-                  print.functions=FALSE){
-    if (!is.null(invisible)){
-        if (invisible == 1){
-            imp <- 0;
-            print.functions <- FALSE
-        } else {
-            print.functions <- TRUE
-        }
-    }
-    if (!missing(max_iterations) && missing(nsim)){
-        nsim <- max_iterations * 10;
-    }
-    n <- as.integer(length(vars));
-    imp <- as.integer(imp);
-    max_iterations <- as.integer(max_iterations)
-    nsim <- as.integer(nsim)
-    nzm <- as.integer(ceiling(n * (n + 13) / 2));
-    nsim <- as.integer(nsim);
-    epsilon <- as.double(epsilon)
-    if (is.null(zm)){
-        mode <- 1L
-        zm <- double(nzm);
+##' @importFrom Rcpp evalCpp
+##' @useDynLib n1qn1, .registration=TRUE
+n1qn1 <- function(call_eval, call_grad, vars, environment = parent.frame(1), ...,
+                   epsilon = .Machine$double.eps, max_iterations = 100, nsim = 100,
+                   imp = 0,
+                   invisible = NULL,
+                   zm = NULL, restart = FALSE,
+                   assign = FALSE,
+                   print.functions = FALSE) {
+  if (!is.null(invisible)) {
+    if (invisible == 1) {
+      imp <- 0
+      print.functions <- FALSE
     } else {
-        mode <- 2L
-        if (restart) model <- 3L
-        if (length(zm) != nzm){
-            stop(sprintf("Compressed Hessian not the right length for this problem.  It should be %d.", nzm))
-        }
+      print.functions <- TRUE
     }
-    ret <- .Call(n1qn1_wrap, call_eval, call_grad, environment,
-                 vars, epsilon, n, mode, max_iterations, nsim, imp, nzm, zm, as.integer(print.functions));
-    if (assign) environment$c.hess <- ret$hess;
-    return(ret)
+  }
+  if (!missing(max_iterations) && missing(nsim)) {
+    nsim <- max_iterations * 10
+  }
+  n <- as.integer(length(vars))
+  imp <- as.integer(imp)
+  max_iterations <- as.integer(max_iterations)
+  nsim <- as.integer(nsim)
+  nzm <- as.integer(ceiling(n * (n + 13) / 2))
+  nsim <- as.integer(nsim)
+  epsilon <- as.double(epsilon)
+  if (is.null(zm)) {
+    mode <- 1L
+    zm <- double(nzm)
+  } else {
+    mode <- 2L
+    if (restart) model <- 3L
+    if (length(zm) != nzm) {
+      stop(sprintf("Compressed Hessian not the right length for this problem.  It should be %d.", nzm))
+    }
+  }
+  ret <- .Call(
+    n1qn1_wrap, call_eval, call_grad, environment,
+    vars, epsilon, n, mode, max_iterations, nsim, imp, nzm, zm, as.integer(print.functions)
+  )
+  if (assign) environment$c.hess <- ret$hess
+  return(ret)
 }

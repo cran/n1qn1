@@ -5,30 +5,31 @@ using namespace arma;
 Rcpp::EvalBase *fev = NULL;                  // pointer to abstract base class
 Rcpp::EvalBase *gev = NULL;                  // pointer to abstract base class
 
-typedef void (*S2_fp) (int *, int *, double *, double *, double *, int *, float *, double *);
-extern "C" void n1qn1_ (S2_fp simul, int n[], double x[], double f[], double g[], double var[], double eps[],
-                        int mode[], int niter[], int nsim[], int imp[], double zm[], int izs[], float rzs[], double dzs[]);
+typedef void (*S2_fp) (int *, int *, double *, double *, double *, int *, float *, double *, int *);
 
-unsigned int n1qn1_calls = 0, n1qn1_grads = 0;
-int n1qn1_fprint = 0;
-static void fwrap(int *ind, int *n, double *x, double *f, double *g, int *ti, float *tr, double *td)
+extern "C" void n1qn1_ (S2_fp simul, int n[], double x[], double f[], double g[], double var[], double eps[],
+                        int mode[], int niter[], int nsim[], int imp[], double zm[], int izs[], float rzs[], double dzs[], int []);
+
+unsigned int nq1n1c_calls = 0, nq1n1c_grads = 0;
+int nq1n1c_fprint = 0;
+static void fwrap(int *ind, int *n, double *x, double *f, double *g, int *ti, float *tr, double *td, int *id)
 {
   int i;
   Rcpp::NumericVector par(*n), ret(*n);
   std::copy(&x[0], &x[0]+*n, &par[0]);
   
   if (*ind==2 || *ind==4) {
-    n1qn1_calls++;
+    nq1n1c_calls++;
     ret = fev->eval(par);
-    if (n1qn1_fprint){
-      Rprintf("%3d:%#14.8g:", n1qn1_calls, ret[0]);
+    if (nq1n1c_fprint){
+      Rprintf("%3d:%#14.8g:", nq1n1c_calls, ret[0]);
       for (i = 0; i < *n; i++) Rprintf(" %#8g", x[i]);
       Rprintf("\n");
     }
     *f = ret[0];
   }
   if (*ind==3 || *ind==4) {
-    n1qn1_grads++;
+    nq1n1c_grads++;
     ret = gev->eval(par);
     std::copy(&ret[0],&ret[0]+*n,&g[0]);
     // for (i = 0; i < *n; i++) g[i] = ret[i];
@@ -46,15 +47,14 @@ uvec lowerTri(mat H, bool diag = false){
 }
 
 
-RcppExport SEXP
-n1qn1_wrap(
+RcppExport SEXP n1qn1_wrap(
            SEXP fSEXP, SEXP gSEXP, SEXP rhoSEXP, SEXP xSEXP, SEXP epsSEXP, 
            SEXP nSEXP, SEXP modeSEXP, SEXP niterSEXP, SEXP nsimSEXP, SEXP impSEXP,
            SEXP nzmSEXP, SEXP zmSEXP, SEXP fprint_sexp) {
   BEGIN_RCPP
-    n1qn1_calls=0;
-  n1qn1_grads=0;
-  n1qn1_fprint = INTEGER(fprint_sexp)[0];
+    nq1n1c_calls=0;
+  nq1n1c_grads=0;
+  nq1n1c_fprint = INTEGER(fprint_sexp)[0];
   if (TYPEOF(fSEXP) == EXTPTRSXP){
     fev = new Rcpp::EvalCompiled(fSEXP, rhoSEXP); // xptr
   } else {
@@ -85,9 +85,10 @@ n1qn1_wrap(
   std::copy(&(REAL(zmSEXP)[0]),&(REAL(zmSEXP)[0])+nzm, &zm[0]);
   eps = REAL(epsSEXP)[0];
   std::fill(&var[0], &var[0]+n, 0.1);
+  int id = 0;
   
   n1qn1_(fwrap,&n,x,&f,g,var,&eps,
-         &mode,&niter,&nsim,&imp,zm,izs,rzs,dzs);
+         &mode,&niter,&nsim,&imp,zm,izs,rzs,dzs, &id);
         
   Rcpp::NumericVector par(n);
   std::copy(&x[0],&x[0]+n,&par[0]);
@@ -124,7 +125,8 @@ n1qn1_wrap(
                             Rcpp::Named("H") = H,
                             // Rcpp::Named("zm")=zms,
                             Rcpp::Named("c.hess") = hess,
-			    Rcpp::Named("n.fn") = n1qn1_calls,
-			    Rcpp::Named("n.gr") = n1qn1_grads);
+			    Rcpp::Named("n.fn") = nq1n1c_calls,
+			    Rcpp::Named("n.gr") = nq1n1c_grads);
   END_RCPP
  }
+

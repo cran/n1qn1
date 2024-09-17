@@ -1,9 +1,11 @@
-42fbe5d8ccb93771c65489948d20e157 *DESCRIPTION
-8795c0fd6e4ede9f2484244af7f21318 *NAMESPACE
-a5debb2a2d1dd9923f83612d75a1038f *NEWS.md
-fc75124d420949529be5be50b0f01fa7 *R/n1qn1.R
+66764581c308cd4b177866654b665962 *DESCRIPTION
+b1b774fe12c6821bb10c714dadac4019 *NAMESPACE
+314c7d2750ebd94416a17eb4b3033814 *NEWS.md
+7cf568b2d53064bdf948251df3b71315 *R/n1qn1.R
 7807025ecf9042f2367d8c89079c405f *README.md
 567351b9adbecfcb38180eb4204e10b4 *inst/COPYING
+4dc0ea2a8248a038be11aae2d3cf306d *inst/include/n1qn1c.h
+48cebbda1cf42163080e363677c513c4 *man/dot-n1qn1ptr.Rd
 cf609b8777f308fbb327cc5b49f4ff1f *man/n1qn1.Rd
 2787d678a68d2ca3a70ffc6490d6abc3 *src/Makevars
 2787d678a68d2ca3a70ffc6490d6abc3 *src/Makevars.win
@@ -11,7 +13,7 @@ e5cd37fd21060be2b5f91a3d92ee3007 *src/RcppExpMod.cpp
 e99704b2989a658ea1d4a8b0cde13dcf *src/ajour.c
 a082d0162073ece4ab481e8f7565c8b0 *src/calmaj.c
 9d6a1b2cdbd3f34fe6ddeeabf6b0807a *src/evaluate.h
-6167f86da5f5c7b2f0559f3ccb332f73 *src/init.c
+175db3444fcbac8f5677d45920f3130a *src/init.c
 84577e7580da86dc96b8c38858e3442e *src/n1qn1.h
 5cc0d46ec29e4da83eba34e9a6bbcf97 *src/n1qn1_all.c
 73fb037ab810f68c241af927cdb7ebf8 *src/proj.c

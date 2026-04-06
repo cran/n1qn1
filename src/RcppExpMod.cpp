@@ -17,7 +17,7 @@ static void fwrap(int *ind, int *n, double *x, double *f, double *g, int *ti, fl
   int i;
   Rcpp::NumericVector par(*n), ret(*n);
   std::copy(&x[0], &x[0]+*n, &par[0]);
-  
+
   if (*ind==2 || *ind==4) {
     nq1n1c_calls++;
     ret = fev->eval(par);
@@ -48,26 +48,16 @@ uvec lowerTri(mat H, bool diag = false){
 
 
 RcppExport SEXP n1qn1_wrap(
-           SEXP fSEXP, SEXP gSEXP, SEXP rhoSEXP, SEXP xSEXP, SEXP epsSEXP, 
+           SEXP fSEXP, SEXP gSEXP, SEXP rhoSEXP, SEXP xSEXP, SEXP epsSEXP,
            SEXP nSEXP, SEXP modeSEXP, SEXP niterSEXP, SEXP nsimSEXP, SEXP impSEXP,
            SEXP nzmSEXP, SEXP zmSEXP, SEXP fprint_sexp) {
   BEGIN_RCPP
     nq1n1c_calls=0;
   nq1n1c_grads=0;
   nq1n1c_fprint = INTEGER(fprint_sexp)[0];
-  delete fev;
-  if (TYPEOF(fSEXP) == EXTPTRSXP){
-    fev = new Rcpp::EvalCompiled(fSEXP, rhoSEXP); // xptr
-  } else {
-    fev = new Rcpp::EvalStandard(fSEXP, rhoSEXP); // Standard evaulation
-  }
-  delete gev;
-  if (TYPEOF(gSEXP) == EXTPTRSXP){
-    gev = new Rcpp::EvalCompiled(gSEXP, rhoSEXP); // xptr
-  } else {
-    gev = new Rcpp::EvalStandard(gSEXP, rhoSEXP); // Standard evaulation
-  }
-  
+
+  // Validate inputs before allocating fev/gev: Rf_error longjmps out,
+  // so any allocations made before the error check would be leaked.
   int n, mode, niter, nsim, imp, nzm;
   n = INTEGER(nSEXP)[0];
   mode = INTEGER(modeSEXP)[0];
@@ -80,8 +70,22 @@ RcppExport SEXP n1qn1_wrap(
   if (nzm <= 0) Rf_error("nzm must be positive (check for integer overflow in nzm calculation)");
   // Prevent signed int overflow in triangular index arithmetic n*(n+1)/2
   // used in n1qn1_all.c:144 and below.  sqrt(INT_MAX) ~ 46340.95.
-  if ((double)n * (n + 1) > (double)INT_MAX)
+  if ((double)n * (n + 1) > (double)INT_MAX) {
     Rf_error("n is too large: n*(n+1) overflows 32-bit integer (maximum n is ~46340)");
+  }
+
+  delete fev;
+  if (TYPEOF(fSEXP) == EXTPTRSXP){
+    fev = new Rcpp::EvalCompiled(fSEXP, rhoSEXP); // xptr
+  } else {
+    fev = new Rcpp::EvalStandard(fSEXP, rhoSEXP); // Standard evaulation
+  }
+  delete gev;
+  if (TYPEOF(gSEXP) == EXTPTRSXP){
+    gev = new Rcpp::EvalCompiled(gSEXP, rhoSEXP); // xptr
+  } else {
+    gev = new Rcpp::EvalStandard(gSEXP, rhoSEXP); // Standard evaulation
+  }
 
   double f, eps;
   double *x = new double[n];
@@ -95,10 +99,10 @@ RcppExport SEXP n1qn1_wrap(
   eps = REAL(epsSEXP)[0];
   std::fill(&var[0], &var[0]+n, 0.1);
   int id = 0;
-  
+
   n1qn1_(fwrap,&n,x,&f,g,var,&eps,
          &mode,&niter,&nsim,&imp,zm,izs,rzs,dzs, &id);
-        
+
   Rcpp::NumericVector par(n);
   std::copy(&x[0],&x[0]+n,&par[0]);
   // for (i=0; i<n; i++) par[i] = x[i];
@@ -122,7 +126,7 @@ RcppExport SEXP n1qn1_wrap(
   // Hessian -> c.hess
   vec hessV = H.elem(lowerTri(H,true));
   std::copy(hessV.begin(),hessV.end(),hess.begin());
-  
+
   delete[] x;
   delete[] g;
   delete[] var;
@@ -139,4 +143,3 @@ RcppExport SEXP n1qn1_wrap(
 			    Rcpp::Named("n.gr") = nq1n1c_grads);
   END_RCPP
  }
-

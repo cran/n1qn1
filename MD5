@@ -1,7 +1,7 @@
-974282384e68d50a375dfb648735ea93 *DESCRIPTION
+9a0cfb25e14baf5e1d9754259d2aad54 *DESCRIPTION
 b1b774fe12c6821bb10c714dadac4019 *NAMESPACE
-169ff10fc48c7265ca3bd67ded752784 *NEWS.md
-90cc5382f6f38f8204437ffc713529f5 *R/n1qn1.R
+6c8f0b1ba7f0d1247b5eb343cd5ca142 *NEWS.md
+e81635d0ad26300f98934f4c1e5b0905 *R/n1qn1.R
 a1a5a6307ad4ff6a4ac58f3681faa001 *README.md
 567351b9adbecfcb38180eb4204e10b4 *inst/COPYING
 4dc0ea2a8248a038be11aae2d3cf306d *inst/include/n1qn1c.h
@@ -9,10 +9,10 @@ a1a5a6307ad4ff6a4ac58f3681faa001 *README.md
 24b08c977d8ba882e51269f6d767c204 *man/n1qn1.Rd
 2787d678a68d2ca3a70ffc6490d6abc3 *src/Makevars
 2787d678a68d2ca3a70ffc6490d6abc3 *src/Makevars.win
-f90c99e8742160bea296752319902982 *src/RcppExpMod.cpp
+a8b5a92b9045a9de8892bb49cf49b137 *src/RcppExpMod.cpp
 edcd7079281ace802bfcea59b05313f5 *src/ajour.c
 0c5f7277fb9619bb3a3d471f771fba55 *src/calmaj.c
-9d6a1b2cdbd3f34fe6ddeeabf6b0807a *src/evaluate.h
+9f983962b9ddd989f4d57370bed756cb *src/evaluate.h
 175db3444fcbac8f5677d45920f3130a *src/init.c
 84577e7580da86dc96b8c38858e3442e *src/n1qn1.h
 579245a15ee34c4eba6946e5dd899fb7 *src/n1qn1_all.c
@@ -20,4 +20,5 @@ e4f08555297205ddbe2833ddf414203b *src/proj.c
 ff8f15b4ce7b29402d5818a1b0adc257 *src/satur.c
 10c76bcc275dcccd5002bdb4524d5a56 *tests/testthat.R
 3407498446a4a026f2c6ead91f73a91c *tests/testthat/test-banana.R
-70266f1048c935a0798fcf87d3275b03 *tests/testthat/test-memory-safety.R
+580c46c242da816db412727270a80e0a *tests/testthat/test-coverage.R
+73fdc83f3940a15326f55130caab7025 *tests/testthat/test-edge-cases.R
